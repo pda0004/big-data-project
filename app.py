@@ -3,6 +3,7 @@ import random
 import time
 from typing import List
 import pandas as pd
+import streamlit as st
 
 def tokenize(text: str) -> List[str]:
     """
@@ -117,12 +118,12 @@ def create_ngram_model(n, path):
             m.update(sentence)
     return m
 
-data = pd.read_csv('/data/DisneylandReviews.csv',encoding='latin-1')
+data = pd.read_csv('data/DisneylandReviews.csv',encoding='latin-1')
 
 def generate_review(score,length = 0, n=8):
 
 
-  m = create_ngram_model(n, '/content/drive/MyDrive/BigDataFinal/'+str(score)+'_review.txt')
+  m = create_ngram_model(n, 'data/'+str(score)+'_review.txt')
 
   if length == 0:
     length = random.randint(30,80)
@@ -133,9 +134,14 @@ def generate_review(score,length = 0, n=8):
     gen_review += r
   gen_review += '.'
   
-  print(f'{"="*50}\nGenerated text:')
-  print(gen_review)
-  print(f'{"="*50}')
 
-  
-generate_review(1,180,10)
+  return(gen_review)
+
+st.title('Disneyland review generator')
+
+
+i = st.selectbox('Wanted Review Score',[1,2,3,4,5])
+b = st.slider('N-gram number (higher will lead to more coherent reviews but less different than the actual reviews)',3,20,12,1)
+
+if st.button('Generate Review'):
+    st.write(generate_review(i,180,b))
